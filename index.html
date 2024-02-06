@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Sistema de Turnos</title>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		/>
+		<script src="https://cdn.socket.io/4.1.1/socket.io.min.js"></script>
+	</head>
+	<body>
+		<div id="cola-info" class="container p-3 my-3 bg-dark text-white">
+			<h1>La Cola</h1>
+			<label for="nombre">Ingresa tu nombre:</label>
+			<input
+				type="text"
+				id="nombre"
+				placeholder="Tu nombre"
+				class="input-group mb-3"
+			/>
+			<button onclick="tomarTurno()"  class="btn btn-primary btn-sm">Tomar Turno </button>
+
+			<p>Personas en cola: <span id="contador">0</span></p>
+			<p>Tu turno: <span id="turno">-</span></p>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+		<script>
+			const socket = io();
+
+			// Evento inicial para obtener información
+			socket.on('init', (data) => {
+				document.getElementById('contador').innerText = data.colaActual;
+			});
+
+			// Evento para actualizar la información en tiempo real
+			socket.on('actualizarTurno', (data) => {
+				document.getElementById('contador').innerText = data.colaActual;
+				document.getElementById('turno').innerText = data.turnoUsuario;
+			});
+
+			// Función para tomar un turno
+			function tomarTurno() {
+				const nombre = document.getElementById('nombre').value;
+				socket.emit('tomarTurno', nombre);
+			}
+		</script>
+	</body>
+</html>
+
